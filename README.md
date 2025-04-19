@@ -1,36 +1,56 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Next.js SocketIO Chat
 
-## Getting Started
+A real-time chat application built with Next.js, SocketIO, and Material UI.
 
-First, run the development server:
+## Technologies Used
+
+- **Next.js**: React framework for building the application
+- **SocketIO**: For real-time, bidirectional communication
+- **Material UI**: Component library for the user interface
+
+## Prerequisites
+
+- Node.js 18.x or later
+
+## Installation
+
+1. Clone the repository:
 
 ```bash
+git clone https://github.com/wolfdev1337/nextjs-socketio.git
+cd nextjs-socketio
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## How It Works
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+The application uses a Next.js Pages API route to create and manage a Socket.IO server:
 
-## Learn More
+1. The SocketIO server is initialized in `pages/api/socket.ts`
+2. The server is attached to the Next.js HTTP server
+3. Client components connect to this SocketIO server
+4. Messages are broadcast to all connected clients in real-time
 
-To learn more about Next.js, take a look at the following resources:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+-  SocketIO server:
+```typescript
+if (!res.socket.server.io) {
+  const io = new ServerIO(res.socket.server, {
+    path: "/api/socket",
+    addTrailingSlash: false,
+  });
+  res.socket.server.io = io;
+}
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+-  SocketIO client:
+```typescript
+fetch("/api/socket").then(() => {
+  const socketInstance = io({
+    path: "/api/socket",
+    addTrailingSlash: false,
+  });
+  // ...
+});
+```
